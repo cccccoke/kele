@@ -1,6 +1,7 @@
 package com.wioyber.kele.core.util.excel;
 
 /**
+ * 导入的Vo需要实现该类
  * @author cjg
  * @since 2023/2/10
  */

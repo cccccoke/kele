@@ -53,8 +53,6 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
      */
     private final ThreadLocal<Integer> cacheInsertCount = new ThreadLocal<>();
 
-    protected abstract M getM();
-
     protected void checkHead(Integer headRow, String headFlag, Map<Integer, String> headMap, AnalysisContext context) {
         if (context.readRowHolder().getRowIndex().equals(headRow)) {
             if (!headFlag.equals(headMap.get(headMap.size() - 1))) {
@@ -150,6 +148,8 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
                 }
         );
     }
+
+    protected abstract M getM();
 
     /**
      * 业务重写

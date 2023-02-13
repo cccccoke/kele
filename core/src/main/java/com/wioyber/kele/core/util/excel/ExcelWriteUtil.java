@@ -15,6 +15,7 @@ import java.util.Collection;
 
 /**
  * 导出工具类
+ *
  * @author cjg
  * @since 2023/2/13
  */
@@ -23,20 +24,11 @@ public class ExcelWriteUtil {
 
 
     public static <V> void simpleWrite(HttpServletResponse response,
-                                 String fileName,
-                                 Class<V> vClass,
-                                 Collection<V> data) {
+                                       String fileName,
+                                       Class<V> vClass,
+                                       Collection<V> data) {
         write(response, fileName, null, 0, vClass, data, null);
     }
-
-    public static <V> void writeTemplate(HttpServletResponse response,
-                                             String fileName,
-                                             String templatePath,
-                                             Class<V> vClass,
-                                             Collection<V> data) {
-        write(response, fileName, templatePath, 0, vClass, data, null);
-    }
-
 
     /**
      * 标准写入
@@ -51,16 +43,16 @@ public class ExcelWriteUtil {
      * @param excludeColumns 忽略的列名
      */
     public static <V> void write(HttpServletResponse response,
-                                              String fileName,
-                                              String templatePath,
-                                              Integer sheet,
-                                              Class<V> vClass,
-                                              Collection<V> data,
-                                              Collection<String> excludeColumns) {
+                                 String fileName,
+                                 String templatePath,
+                                 Integer sheet,
+                                 Class<V> vClass,
+                                 Collection<V> data,
+                                 Collection<String> excludeColumns) {
         try {
             setResponse(response, fileName);
             ExcelWriterBuilder builder = EasyExcelFactory.write(response.getOutputStream(), vClass);
-            if(excludeColumns != null && !excludeColumns.isEmpty()){
+            if (excludeColumns != null && !excludeColumns.isEmpty()) {
                 builder.excludeColumnFieldNames(excludeColumns);
             }
             if (StringUtils.isNotBlank(templatePath)) {
@@ -74,9 +66,9 @@ public class ExcelWriteUtil {
                 }
             }
             builder
-                   .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息
-                   .sheet(sheet)
-                   .doWrite(data);
+                    .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息
+                    .sheet(sheet)
+                    .doWrite(data);
         } catch (Exception e) {
             e.printStackTrace();
             // 重置response类型为JSON
@@ -101,9 +93,17 @@ public class ExcelWriteUtil {
         }
     }
 
-    public static void resetResponse(HttpServletResponse response){
+    public static void resetResponse(HttpServletResponse response) {
         response.reset();
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
+    }
+
+    public static <V> void writeTemplate(HttpServletResponse response,
+                                         String fileName,
+                                         String templatePath,
+                                         Class<V> vClass,
+                                         Collection<V> data) {
+        write(response, fileName, templatePath, 0, vClass, data, null);
     }
 }

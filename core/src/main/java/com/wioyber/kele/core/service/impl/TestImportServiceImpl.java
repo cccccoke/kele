@@ -31,7 +31,7 @@ public class TestImportServiceImpl implements ITestImportService, IEasyExcelImpo
 
     @Override
     public void testImport(MultipartFile file) {
-        this.importFile(file, TestExcelVO.class, demoImportImportListener, 1);
+        this.readFile(file, TestExcelVO.class, demoImportImportListener, 1);
     }
 
     @Override
