@@ -1,4 +1,4 @@
-package com.wioyber.kele.core.util.excel;
+package com.wioyber.kele.core.util.excel.listener;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReflectUtil;
@@ -11,7 +11,9 @@ import com.google.common.collect.Maps;
 import com.wioyber.kele.core.enums.exception.CustomExceptionEnum;
 import com.wioyber.kele.core.exception.BaseException;
 import com.wioyber.kele.core.util.CommonUtil;
+import com.wioyber.kele.core.util.excel.IBaseExcel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -26,14 +28,17 @@ import java.util.function.Supplier;
  * @since 2023/2/10
  */
 @Slf4j
-public abstract class AbstractExcelImportListener<P extends Serializable, V extends IBaseImport, M extends BaseMapper<P>>
+public abstract class AbstractExcelImportListener<P extends Serializable, V extends IBaseExcel, M extends BaseMapper<P>>
         extends AnalysisEventListener<V> {
 
     /**
      * 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收
      */
-    private static final int BATCH_COUNT = 2;
+    private static final int BATCH_COUNT = 100;
 
+    /**
+     * 错误信息返回条数
+     */
     private static final int ERROR_INFO_MAX = 5;
     /**
      * 缓存的错误信息
@@ -43,6 +48,9 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
      * 缓存的list信息
      */
     private final ThreadLocal<List<P>> cacheData = new ThreadLocal<>();
+    /**
+     * 记录导入的数据条数
+     */
     private final ThreadLocal<Integer> cacheInsertCount = new ThreadLocal<>();
 
     protected abstract M getM();
@@ -77,15 +85,12 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
         // 存入
         initCacheDataIsEmpty();
         List<P> ts = cacheData.get();
-        log.info("-----> 存入数据,{}", transformData(p, v));
         ts.add(transformData(p, v));
-        log.info("-----> 数据,{}", cacheData.get());
         // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
         if (cacheData.get().size() >= BATCH_COUNT) {
             log.info("-----> 导入数据,{}", cacheData.get());
             insert(cacheData.get());
             // 存储完成清理缓存
-            log.info("-----> 清空data缓存");
             cacheData.remove();
         }
     }
@@ -136,11 +141,14 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
 
     protected abstract Supplier<P> getP();
 
-    protected void insert(Collection<P> list) {
-        if (null != list && !list.isEmpty()) {
-            list.forEach(getM()::insert);
-            cacheInsertCount.set(cacheInsertCount.get() + 1);
-        }
+    @Transactional
+    public void insert(Collection<P> list) {
+        //  建议替换为批量
+        list.forEach(p -> {
+                    cacheInsertCount.set(cacheInsertCount.get() + 1);
+                    getM().insert(p);
+                }
+        );
     }
 
     /**
@@ -164,8 +172,10 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
                 throw new BaseException(-1, "未找到可用数据");
             }
             // 最后一次插入数据
-            log.info("-----> 最后导入数据");
-            insert(cacheData.get());
+            if (!cacheData.get().isEmpty()) {
+                insert(cacheData.get());
+            }
+            log.info("-----> 导入了{}数据", cacheInsertCount.get());
         } finally {
             cacheClean();
         }

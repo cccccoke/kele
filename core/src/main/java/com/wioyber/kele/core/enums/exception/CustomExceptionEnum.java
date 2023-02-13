@@ -13,6 +13,7 @@ import lombok.Getter;
 public enum CustomExceptionEnum implements BaseExceptionEnum {
     DONOTALLOW(SystemConstant.SYSTEM_ERROR_CODE, "不允许的操作"),
     ABNORMAL_TEMPLATE(SystemConstant.SYSTEM_ERROR_CODE, "模版异常"),
+    EXPORTFAILURE(SystemConstant.SYSTEM_ERROR_CODE, "下载文件失败"),
     GENERALEXCEPTION(SystemConstant.SYSTEM_ERROR_CODE, "系统异常");
 
     private final int code;

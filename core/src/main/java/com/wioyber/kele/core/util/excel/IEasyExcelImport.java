@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wioyber.kele.core.exception.BaseException;
+import com.wioyber.kele.core.util.excel.listener.AbstractExcelImportListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
@@ -15,12 +16,12 @@ import java.io.Serializable;
  */
 public interface IEasyExcelImport<P extends Serializable, M extends BaseMapper<P>> {
 
-    default <V extends IBaseImport, L extends AbstractExcelImportListener<P, V, M>> void importFile(MultipartFile file, Class<V> vClass, L listener){
+    default <V extends IBaseExcel, L extends AbstractExcelImportListener<P, V, M>> void importFile(MultipartFile file, Class<V> vClass, L listener){
         importFile(file,vClass,listener,1);
     }
 
 
-    default <L extends AbstractExcelImportListener<P, V, M>, V extends IBaseImport> void importFile(MultipartFile file, Class<V> vClass, L listener, Integer headRow) {
+    default <L extends AbstractExcelImportListener<P, V, M>, V extends IBaseExcel> void importFile(MultipartFile file, Class<V> vClass, L listener, Integer headRow) {
         try {
             EasyExcelFactory.read(file.getInputStream(), vClass, listener)
                     .sheet()

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author cjg
@@ -25,5 +26,10 @@ public class TestImportController {
     public Result<String> testImport(MultipartFile file){
         iTestImportService.testImport(file);
         return Result.success();
+    }
+
+    @PostMapping("/test/export")
+    public void testExport(HttpServletResponse response){
+        iTestImportService.testExport(response);
     }
 }

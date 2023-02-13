@@ -3,8 +3,8 @@ package com.wioyber.kele.core.service.excel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.wioyber.kele.core.dao.TestImportDao;
 import com.wioyber.kele.core.entity.po.TestImport;
-import com.wioyber.kele.core.entity.vo.TestImportVO;
-import com.wioyber.kele.core.util.excel.AbstractExcelImportListener;
+import com.wioyber.kele.core.entity.vo.TestExcelVO;
+import com.wioyber.kele.core.util.excel.listener.AbstractExcelImportListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 @Component
 public class DemoImportImportListener
-        extends AbstractExcelImportListener<TestImport, TestImportVO, TestImportDao> {
+        extends AbstractExcelImportListener<TestImport, TestExcelVO, TestImportDao> {
 
     @Resource
     private TestImportDao testImportDao;

@@ -1,7 +1,7 @@
 package com.wioyber.kele.core.entity.po;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.wioyber.kele.core.util.excel.IBaseImport;
+import com.wioyber.kele.core.util.excel.IBaseExcel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class Account extends Model<Account> implements IBaseImport {
+public class Account extends Model<Account> implements IBaseExcel {
     private Integer id;
     private String username;
     private String password;
