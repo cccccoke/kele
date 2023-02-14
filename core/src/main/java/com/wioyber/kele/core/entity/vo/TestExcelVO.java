@@ -1,9 +1,9 @@
 package com.wioyber.kele.core.entity.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.wioyber.kele.core.util.excel.IBaseExcel;
-import com.wioyber.kele.core.util.excel.converter.GenderConverter;
-import com.wioyber.kele.core.util.excel.converter.LocalDateTimeConverter;
+import com.wioyber.kele.core.support.excel.IBaseExcel;
+import com.wioyber.kele.core.support.excel.converter.GenderConverter;
+import com.wioyber.kele.core.support.excel.converter.LocalDateTimeConverter;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

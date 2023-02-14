@@ -1,4 +1,4 @@
-package com.wioyber.kele.core.util.excel;
+package com.wioyber.kele.core.util;
 
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
