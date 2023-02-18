@@ -75,6 +75,7 @@ public class ExcelWriteUtil {
                               .doWrite(data());
                  */
                 builder.registerWriteHandler(new CustomCellWriteHandler());
+//                builder.registerWriteHandler(new CustomRowWriteHandler());
             }
             builder
                     .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息

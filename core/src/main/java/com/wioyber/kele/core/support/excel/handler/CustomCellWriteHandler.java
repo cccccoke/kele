@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
-import java.util.List;
-
 /**
  * @author cjg
  * @since 2023/2/18
@@ -21,31 +19,45 @@ public class CustomCellWriteHandler implements CellWriteHandler {
 
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
-        List<WriteCellData<?>> cellDataList = context.getCellDataList();
-        log.info("开始写入...{}", cellDataList);
-        cellDataList.stream()
-                /*
-                 *  检索所有单元格
-                 */
-//                .filter(i-> checkType(i.getType(),i,"程建国"))
-                /*
-                 * 检索固定Row行/Column列的单元格  忽略表头(默认0)
-                 *
-                 */
-                .filter(i-> i.getColumnIndex() == 0 && checkType(i.getType(),i,"程建国"))
-                .forEach(i -> {
-                    // 样式
-                    WriteCellStyle style = i.getWriteCellStyle() == null ? new WriteCellStyle() : i.getWriteCellStyle();
-                    // 字体
-                    WriteFont font = style.getWriteFont() == null ? new WriteFont() : style.getWriteFont();
-                    i.setType(CellDataTypeEnum.STRING);
-                    // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.
-                    style.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
-                    style.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-                    font.setColor(IndexedColors.RED.getIndex());
-                    style.setWriteFont(font);
-                    i.setWriteCellStyle(style);
-                });
+        log.info("第{}行，第{}列写入完成。", context.getCell().getRowIndex(), context.getCell().getColumnIndex());
+        WriteCellData<?> cellData = context.getFirstCellData();
+        if (checkType(cellData.getType(), cellData, "程建国")) {
+            WriteCellStyle style = cellData.getOrCreateStyle();
+            //字体
+            WriteFont font = style.getWriteFont() == null ? new WriteFont() : style.getWriteFont();
+            cellData.setType(CellDataTypeEnum.STRING);
+            // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.
+            style.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
+            style.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+            font.setColor(IndexedColors.RED.getIndex());
+            style.setWriteFont(font);
+            //默认会将 WriteCellStyle 设置到 cell里面去
+        }
+//        List<WriteCellData<?>> cellDataList = context.getCellDataList();
+//
+//        cellDataList.stream()
+//                /*
+//                 *  检索所有单元格
+//                 */
+////                .filter(i-> checkType(i.getType(),i,"程建国"))
+//                /*
+//                 * 检索固定Row行/Column列的单元格  忽略表头(默认0)
+//                 *
+//                 */
+//                .filter(i-> i.getColumnIndex() == 0 && checkType(i.getType(),i,"程建国"))
+//                .forEach(i -> {
+//                    // 样式
+//                    WriteCellStyle style = i.getOrCreateStyle();
+//                    // 字体
+//                    WriteFont font =  style.getWriteFont() == null ? new WriteFont() : style.getWriteFont();
+//                    i.setType(CellDataTypeEnum.STRING);
+//                    // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.
+//                    style.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
+//                    style.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+//                    font.setColor(IndexedColors.RED.getIndex());
+//                    style.setWriteFont(font);
+//                    i.setWriteCellStyle(style);
+//                });
     }
 
     /**
