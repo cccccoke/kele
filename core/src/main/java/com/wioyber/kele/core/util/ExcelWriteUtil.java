@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.wioyber.kele.core.enums.exception.CustomExceptionEnum;
 import com.wioyber.kele.core.exception.BaseException;
+import com.wioyber.kele.core.support.excel.handler.CustomCellWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,6 +65,16 @@ public class ExcelWriteUtil {
                 } else {
                     builder.withTemplate(templatePath);
                 }
+                /*
+                     模版写入时重写单元格控制器
+                     非模版写入也可使用
+                     官方默认实现中可使用：
+                     EasyExcel.write(fileName, DemoData.class)
+                              .registerWriteHandler(new CustomCellWriteHandler())
+                              .sheet("模板")
+                              .doWrite(data());
+                 */
+                builder.registerWriteHandler(new CustomCellWriteHandler());
             }
             builder
                     .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息
