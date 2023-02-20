@@ -2,17 +2,23 @@ package com.wioyber.kele.core.util;
 
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.metadata.style.WriteCellStyle;
+import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.wioyber.kele.core.enums.exception.CustomExceptionEnum;
 import com.wioyber.kele.core.exception.BaseException;
 import com.wioyber.kele.core.support.excel.handler.CustomRowStyleHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 导出工具类
@@ -22,6 +28,21 @@ import java.util.Collection;
  */
 @Slf4j
 public class ExcelWriteUtil {
+
+    private static final ThreadLocal<List<WriteCellStyle>> cellStyleCache = ThreadLocal.withInitial(() -> {
+        ArrayList<WriteCellStyle> writeCellStyles = new ArrayList<>();
+        WriteCellStyle cellStyle = new WriteCellStyle();
+        // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.头默认了 FillPatternType所以可以不指定
+        cellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
+        // 背景绿色
+        cellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        WriteFont font = new WriteFont();
+        // 字体大小
+        font.setFontHeightInPoints((short) 20);
+        cellStyle.setWriteFont(font);
+        writeCellStyles.add(cellStyle);
+        return writeCellStyles;
+    });
 
 
     public static <V> void simpleWrite(HttpServletResponse response,
@@ -77,7 +98,7 @@ public class ExcelWriteUtil {
 //                builder.registerWriteHandler(new CustomCellWriteHandler());
 //                builder.inMemory(Boolean.TRUE);
 //                builder.registerWriteHandler(new CustomRowWriteHandler());
-                builder.registerWriteHandler(new CustomRowStyleHandler());
+                builder.registerWriteHandler(new CustomRowStyleHandler(cellStyleCache.get()));
             }
             builder
                     .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息
@@ -88,6 +109,8 @@ public class ExcelWriteUtil {
             // 重置response类型为JSON
             resetResponse(response);
             throw new BaseException(CustomExceptionEnum.EXPORTFAILURE);
+        } finally {
+            cellStyleCache.remove();
         }
         log.info("----->导出{}条数据", data.size());
     }
