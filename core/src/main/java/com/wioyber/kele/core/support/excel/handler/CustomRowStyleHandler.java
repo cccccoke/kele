@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author cjg
@@ -22,7 +22,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomRowStyleHandler extends AbstractCellStyleStrategy {
 
-    private List<WriteCellStyle> writeCellStyleList;
+
+   private Map<String, WriteCellStyle> writeCellStyleMap;
 
     /**
      * 检查的列下标(默认从0开始)
@@ -46,8 +47,7 @@ public class CustomRowStyleHandler extends AbstractCellStyleStrategy {
         //plan3: 循环每行，时间复杂度较高
         context.getRow().forEach(c -> {
             if (checkData(c)) {
-                //  todo:官方说需要缓存  优化需要把style缓存起来
-                WriteCellStyle.merge(writeCellStyleList.get(0), cellData.getOrCreateStyle());
+                WriteCellStyle.merge(writeCellStyleMap.get("RED"), cellData.getOrCreateStyle());
             }
         });
 
