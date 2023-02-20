@@ -4,7 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.wioyber.kele.core.enums.exception.CustomExceptionEnum;
 import com.wioyber.kele.core.exception.BaseException;
-import com.wioyber.kele.core.support.excel.handler.CustomCellWriteHandler;
+import com.wioyber.kele.core.support.excel.handler.CustomRowStyleHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -74,8 +74,10 @@ public class ExcelWriteUtil {
                               .sheet("模板")
                               .doWrite(data());
                  */
-                builder.registerWriteHandler(new CustomCellWriteHandler());
+//                builder.registerWriteHandler(new CustomCellWriteHandler());
+//                builder.inMemory(Boolean.TRUE);
 //                builder.registerWriteHandler(new CustomRowWriteHandler());
+                builder.registerWriteHandler(new CustomRowStyleHandler());
             }
             builder
                     .autoCloseStream(Boolean.FALSE) //取消自动关闭，返回JSON信息
