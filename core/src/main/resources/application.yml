@@ -1,14 +1,14 @@
 spring:
   datasource:
-    url: jdbc:mysql://1.15.4.200:3306/template?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/template?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: TNT@0217
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
   redis:
     database: 0
-    host: 1.15.4.200
-    password: TNT@0217
+    host: localhost
+#    password: TNT@0217
     port: 6379
     lettuce:
       pool:
