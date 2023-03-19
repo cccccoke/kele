@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active:
   datasource:
     url: jdbc:mysql://localhost:3306/template?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -21,4 +23,3 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 9001
-
