@@ -115,6 +115,7 @@ public class ExcelWriteUtil {
             throw new BaseException(CustomExceptionEnum.EXPORTFAILURE);
         } finally {
             //  移除样式缓存
+            log.info("---------->删除缓存的样式");
             writeCellStyleCache.remove();
         }
         log.info("----->导出{}条数据", data.size());
