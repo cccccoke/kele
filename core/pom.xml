@@ -21,13 +21,14 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>1.5.3</version>
+            <artifactId>shiro-spring-boot-web-starter</artifactId>
+            <version>1.4.0</version>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-web</artifactId>
-            <version>1.5.3</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->

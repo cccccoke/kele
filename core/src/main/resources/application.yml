@@ -2,7 +2,7 @@ spring:
   profiles:
     active:
   datasource:
-    url: jdbc:mysql://localhost:3306/template?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/template?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
     username: root
     password: TNT@0217
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,3 +23,19 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 9001
+shiro:
+  session:
+    expire: 300
+  filter:
+    path:
+      anon: #白名单路径，不拦截，后面配置路径
+        - /info/login/**
+        - /info/logout/**
+      authc: #必须登录的路径，后面配置路径
+          - /**
+#      port: #必须是某端口的路径，后面配置路径
+#      anon：无需认证就可以访问
+#      authc：必须认证了才能让问
+#      user：必须拥有，记住我功能，才能访问
+#      perms：拥有对某个资源的权限才能访问
+#      role：拥有某个角色权限才能访问
