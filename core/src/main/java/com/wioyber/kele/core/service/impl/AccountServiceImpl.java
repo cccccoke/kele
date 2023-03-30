@@ -17,6 +17,10 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author cjg
@@ -25,6 +29,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountDao, Account> implements IAccountService {
+
+    @Resource
+    private AccountDao accountDao;
+
 
     @Override
     @RedisLock(lockEnum = LockEnum.A_WORK, expireTime = 20L)
@@ -50,6 +58,18 @@ public class AccountServiceImpl extends ServiceImpl<AccountDao, Account> impleme
         subject.login(token);
         return getLoginVo();
     }
+
+    @Override
+    @Transactional
+    public void insertTest(List<Account> list) {
+       insertWork(list);
+    }
+
+
+    private void insertWork(List<Account> list){
+        list.forEach(accountDao::insert);
+    }
+
 
     private AccountVO getLoginVo() {
         Session session = SecurityUtils.getSubject().getSession();
