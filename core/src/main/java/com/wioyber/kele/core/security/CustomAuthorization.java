@@ -1,15 +1,18 @@
 package com.wioyber.kele.core.security;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.wioyber.kele.core.common.sys.SystemConstant;
 import com.wioyber.kele.core.dao.AccountDao;
 import com.wioyber.kele.core.entity.po.Account;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import javax.annotation.Resource;
@@ -64,6 +67,9 @@ public class CustomAuthorization extends AuthorizingRealm {
         if (account == null) {
             throw new AuthenticationException("您未登录");
         }
+
+        Session session = SecurityUtils.getSubject().getSession();
+        session.setAttribute(SystemConstant.SESSION_USER_INFO_KEY, account);
         return new SimpleAuthenticationInfo(
                 token.getPrincipal(), account.getPassword(), getName());
     }

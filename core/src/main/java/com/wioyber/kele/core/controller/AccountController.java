@@ -1,13 +1,13 @@
 package com.wioyber.kele.core.controller;
 
 import com.wioyber.kele.core.common.sys.Result;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.Account;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
+import com.wioyber.kele.core.entity.vo.AccountVO;
+import com.wioyber.kele.core.service.IAccountService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @author cjg
@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/info")
 public class AccountController {
 
+
+    @Resource
+    private IAccountService iAccountService;
+
     @PostMapping("/login")
-    public Result<Account> login(String username, String password) {
-        Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        subject.login(token);
-        return Result.success();
+    public Result<AccountVO> login(String username, String password) {
+        return Result.success(iAccountService.login(username, password));
     }
 }

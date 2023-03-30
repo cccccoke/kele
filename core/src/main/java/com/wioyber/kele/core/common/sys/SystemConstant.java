@@ -14,7 +14,8 @@ public class SystemConstant {
 
     public static final String SYSTEM_SUCCESS_MSG = "success";
 
-    public final static String USER_INFO_TOKEN_PREFIX = "soe:shiro:userInfo:tk:";
+    public final static String USER_INFO_TOKEN_PREFIX = "kele:shiro:info:tk:";
+    public final static String SESSION_USER_INFO_KEY = "userInfoKey";
 
 
 }
