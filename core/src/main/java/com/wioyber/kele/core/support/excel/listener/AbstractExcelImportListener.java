@@ -63,6 +63,7 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
     }
 
     @Override
+    @Transactional
     public void invoke(V v, AnalysisContext analysisContext) {
         log.info("解析到一条数据:{}", JSON.toJSONString(v));
         // 检查数据
@@ -139,8 +140,7 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
 
     protected abstract Supplier<P> getP();
 
-    @Transactional
-    public void insert(Collection<P> list) {
+    private void insert(Collection<P> list) {
         //  建议替换为批量
         list.forEach(p -> {
                     cacheInsertCount.set(cacheInsertCount.get() + 1);
@@ -163,6 +163,7 @@ public abstract class AbstractExcelImportListener<P extends Serializable, V exte
     }
 
     @Override
+    @Transactional
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         try {
             if (cacheError.get() != null && !cacheError.get().isEmpty()) {

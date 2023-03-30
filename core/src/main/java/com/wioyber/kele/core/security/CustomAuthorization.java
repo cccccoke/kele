@@ -1,49 +1,76 @@
-//package com.wioyber.kele.core.security;
-//
-//import com.wioyber.kele.core.entity.po.Account;
-//import lombok.extern.slf4j.Slf4j;
-//import org.apache.shiro.authc.AuthenticationException;
-//import org.apache.shiro.authc.AuthenticationInfo;
-//import org.apache.shiro.authc.AuthenticationToken;
-//import org.apache.shiro.authc.SimpleAuthenticationInfo;
-//import org.apache.shiro.authz.AuthorizationInfo;
-//import org.apache.shiro.realm.AuthorizingRealm;
-//import org.apache.shiro.subject.PrincipalCollection;
-//
-///**
-// * @author cjg
-// * @since 2023/1/6
-// */
-//@Slf4j
-//public class CustomAuthorization extends AuthorizingRealm {
-//
-//    /**
-//     * 授权
-//     *
-//     * @param principalCollection the principal collection
-//     * @return the authorization info
-//     */
-//    @Override
-//    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-//        log.info("执行了------>{}", "授权");
-//        return null;
-//    }
-//
-//    /**
-//     * 认证
-//     *
-//     * @param authenticationToken the authentication token
-//     * @return the authentication info
-//     * @throws AuthenticationException the authentication exception
-//     */
-//    @Override
-//    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-//        String username = (String) authenticationToken.getPrincipal();
-//        Account account = new Account();
-//        account.setUsername("cjg");
-//        account.setPassword("123");
-//        log.info("执行了------>{}", "认证");
-////        return new SimpleAuthenticationInfo(account.getUsername(), account.getPassword(), getName());
-//        return new SimpleAuthenticationInfo(account.getUsername(), account.getPassword(), getName());
-//    }
-//}
+package com.wioyber.kele.core.security;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.wioyber.kele.core.common.sys.SystemConstant;
+import com.wioyber.kele.core.dao.AccountDao;
+import com.wioyber.kele.core.entity.po.Account;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
+
+import javax.annotation.Resource;
+
+/**
+ * @author cjg
+ * @since 2023/1/6
+ */
+@Slf4j
+public class CustomAuthorization extends AuthorizingRealm {
+
+    @Resource
+    private AccountDao accountDao;
+
+
+    /**
+     * 授权
+     *
+     * @param principalCollection the principal collection
+     * @return the authorization info
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        log.info("执行了------>{}", "授权");
+        return null;
+    }
+
+    /**
+     * 认证
+     *
+     * @param authenticationToken the authentication token
+     * @return the authentication info
+     * @throws AuthenticationException the authentication exception
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) {
+        try {
+            return loginAuthentication(authenticationToken);
+        } catch (Exception e) {
+            throw new AuthenticationException();
+        }
+    }
+
+    private AuthenticationInfo loginAuthentication(AuthenticationToken token) {
+        Account account = null;
+        try {
+            account = accountDao.selectOne(Wrappers.<Account>lambdaQuery()
+                    .eq(Account::getUsername, token.getPrincipal()));
+        } catch (Exception e) {
+            log.error("用户登录失败:{},{},{}", e.getStackTrace(), e.getMessage(), e.getCause());
+        }
+        if (account == null) {
+            throw new AuthenticationException("您未登录");
+        }
+
+        Session session = SecurityUtils.getSubject().getSession();
+        session.setAttribute(SystemConstant.SESSION_USER_INFO_KEY, account);
+        return new SimpleAuthenticationInfo(
+                token.getPrincipal(), account.getPassword(), getName());
+    }
+}
