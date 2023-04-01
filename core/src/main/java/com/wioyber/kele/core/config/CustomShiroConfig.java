@@ -2,6 +2,7 @@ package com.wioyber.kele.core.config;
 
 import com.wioyber.kele.core.security.CustomAuthorization;
 import lombok.Data;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -53,8 +54,8 @@ public class CustomShiroConfig {
 
     @Bean
     public DefaultWebSecurityManager defaultWebSecurityManager(
-                    @Qualifier("customAuthorization") CustomAuthorization customAuthorization,
-                    @Qualifier("sessionManager") SessionManager sessionManager) {
+            @Qualifier("customAuthorization") CustomAuthorization customAuthorization,
+            @Qualifier("sessionManager") SessionManager sessionManager) {
         DefaultWebSecurityManager webSecurityManager = new DefaultWebSecurityManager();
         webSecurityManager.setSessionManager(sessionManager);
         webSecurityManager.setRealm(customAuthorization);
@@ -73,8 +74,19 @@ public class CustomShiroConfig {
     }
 
     @Bean
-    public CustomAuthorization customAuthorization() {
-        return new CustomAuthorization();
+    public CustomAuthorization customAuthorization(@Qualifier("CustomHashedCredentialsMatcher") HashedCredentialsMatcher hashedCredentialsMatcher) {
+        CustomAuthorization customAuthorization = new CustomAuthorization();
+        customAuthorization.setCredentialsMatcher(hashedCredentialsMatcher);
+        return customAuthorization;
+    }
+
+    @Bean("CustomHashedCredentialsMatcher")
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        matcher.setHashAlgorithmName("MD5");
+        //散列次数
+        matcher.setHashIterations(1024);
+        return matcher;
     }
 
 

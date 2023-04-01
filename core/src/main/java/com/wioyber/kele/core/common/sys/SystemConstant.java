@@ -17,5 +17,7 @@ public class SystemConstant {
     public final static String USER_INFO_TOKEN_PREFIX = "kele:shiro:info:tk:";
     public final static String SESSION_USER_INFO_KEY = "userInfoKey";
 
+    public final static String AES_LOGIN_KEY = "_C_Aes_coke_key_";
+
 
 }

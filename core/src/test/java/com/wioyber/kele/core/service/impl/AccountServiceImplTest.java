@@ -1,7 +1,6 @@
 package com.wioyber.kele.core.service.impl;
 
 import com.wioyber.kele.core.KeleApplicationTests;
-import com.wioyber.kele.core.entity.po.Account;
 import com.wioyber.kele.core.service.IAccountService;
 import org.junit.jupiter.api.Test;
 

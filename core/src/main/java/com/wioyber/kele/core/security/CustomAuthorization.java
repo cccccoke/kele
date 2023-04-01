@@ -1,9 +1,8 @@
 package com.wioyber.kele.core.security;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wioyber.kele.core.common.sys.SystemConstant;
-import com.wioyber.kele.core.dao.AccountDao;
-import com.wioyber.kele.core.entity.po.Account;
+import com.wioyber.kele.core.entity.po.SysUser;
+import com.wioyber.kele.core.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -11,9 +10,11 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import javax.annotation.Resource;
 
@@ -24,9 +25,9 @@ import javax.annotation.Resource;
 @Slf4j
 public class CustomAuthorization extends AuthorizingRealm {
 
-    @Resource
-    private AccountDao accountDao;
 
+    @Resource
+    private ISysUserService iSysUserService;
 
     /**
      * 授权
@@ -57,20 +58,27 @@ public class CustomAuthorization extends AuthorizingRealm {
     }
 
     private AuthenticationInfo loginAuthentication(AuthenticationToken token) {
-        Account account = null;
+        SysUser sysUser = null;
         try {
-            account = accountDao.selectOne(Wrappers.<Account>lambdaQuery()
-                    .eq(Account::getUsername, token.getPrincipal()));
+            sysUser = iSysUserService.getByName((String) token.getPrincipal());
         } catch (Exception e) {
             log.error("用户登录失败:{},{},{}", e.getStackTrace(), e.getMessage(), e.getCause());
         }
-        if (account == null) {
+        if (sysUser == null) {
             throw new AuthenticationException("您未登录");
         }
 
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute(SystemConstant.SESSION_USER_INFO_KEY, account);
+        session.setAttribute(SystemConstant.SESSION_USER_INFO_KEY, sysUser);
+        //密码加密对比
         return new SimpleAuthenticationInfo(
-                token.getPrincipal(), account.getPassword(), getName());
+                token.getPrincipal(),
+                sysUser.getPassword(),
+                ByteSource.Util.bytes(sysUser.getUsername()),
+                getName());
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new SimpleHash("md5", "123456", ByteSource.Util.bytes("kele"), 1024).toString());
     }
 }
