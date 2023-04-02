@@ -3,6 +3,7 @@ package com.wioyber.kele.core.service;
 import com.wioyber.kele.core.entity.po.SysUser;
 import com.wioyber.kele.core.entity.vo.LoginRtnVo;
 import com.wioyber.kele.core.entity.vo.LoginVo;
+import com.wioyber.kele.core.entity.vo.UserRoleResVo;
 
 /**
  * @author cjg
@@ -13,5 +14,7 @@ public interface ISysUserService {
     LoginRtnVo login(LoginVo loginVo);
 
     SysUser getByName(String username);
+
+    UserRoleResVo getUserInfo(Long id);
 
 }

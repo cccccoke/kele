@@ -7,11 +7,15 @@ spring:
     password: TNT@0217
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
+  cache:
+    type: redis
   redis:
     database: 0
     host: localhost
-#    password: TNT@0217
+    #    password: TNT@0217
     port: 6379
+    cache:
+      ttl: 30
     lettuce:
       pool:
         min-idle: 0
@@ -31,8 +35,9 @@ shiro:
       anon: #白名单路径，不拦截，后面配置路径
         - /login
         - /logout
+        - /test/**
       authc: #必须登录的路径，后面配置路径
-          - /**
+        - /**
 #      port: #必须是某端口的路径，后面配置路径
 #      anon：无需认证就可以访问
 #      authc：必须认证了才能让问

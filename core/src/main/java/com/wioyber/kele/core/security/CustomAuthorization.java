@@ -10,11 +10,11 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 
@@ -27,6 +27,7 @@ public class CustomAuthorization extends AuthorizingRealm {
 
 
     @Resource
+    @Lazy
     private ISysUserService iSysUserService;
 
     /**
@@ -76,9 +77,5 @@ public class CustomAuthorization extends AuthorizingRealm {
                 sysUser.getPassword(),
                 ByteSource.Util.bytes(sysUser.getUsername()),
                 getName());
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new SimpleHash("md5", "123456", ByteSource.Util.bytes("kele"), 1024).toString());
     }
 }
